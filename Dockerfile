@@ -1,20 +1,11 @@
-FROM alpine:latest
+FROM debian:bullseye
 
-RUN apk add --no-cache git build-base
+RUN apt update && apt install -y git build-essential golang
 
-# اسحب الريبو
-RUN git clone https://www.bamsoftware.com/git/dnstt.git /dnstt
+WORKDIR /app
+RUN git clone https://www.bamsoftware.com/git/dnstt.git
+WORKDIR /app/dnstt
+RUN make
 
-# غيّر المسار للمجلد الصحيح
-WORKDIR /dnstt
-
-# نفّذ make داخل مجلد dnstt-server
-RUN make -C dnstt-server
-
-# انسخ المفاتيح و السكريبت
-COPY server.key .
-COPY server.pub .
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-CMD ["/start.sh"]
+EXPOSE 53/udp
+CMD ["./dnstt-server", "-udp", "8.8.8.8:53", "dns.khartoshtop.qzz.io", "server.key", "server.pub"]
