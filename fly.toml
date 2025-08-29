@@ -1,0 +1,14 @@
+app = "dnstt-fly"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+
+[[services]]
+  internal_port = 53
+  protocol = "udp"
+
+  [[services.ports]]
+    port = 53
+    handlers = ["udp"]
